@@ -56,5 +56,13 @@ int main(int argc, char * argv[]) {
         printf("Process pid %d needs %d memory\n", pptr->proc_arr[i].pid, pptr->proc_arr[i].memchunk);
     }
 
+    Heap * q = CreateHeap(pptr->numProcs, 0);
+    
+    for(int i = 0; i < pptr->numProcs; i++) {
+        insert(q, pptr->proc_arr[i]);
+    }
+
+    print(q);
+    
     free(pptr->proc_arr);
 }
