@@ -3,8 +3,6 @@
 #include "holes.h"
 #include <string.h>
 
-
-
 //Takes two command line args "testfile memStrategy"
 //Mem strats = first, best, next, worst
 int main(int argc, char * argv[]) {
@@ -71,9 +69,9 @@ int main(int argc, char * argv[]) {
         printf("Allocate by first\n");
         printf("Current mem left for allocation = %d\n", ms->space_rem);
         process node = PopMin(q);
-        process * head = &node;
-        ms->head = &head;
-        printf("sim pointer pointer points to pid %d and has memchunk %d\n", (*(ms->head))->pid, (*(ms->head))->memchunk);
+        insertNode(node, ms);
+        
+        printf("sim pointer pointer points to pid %d and has memchunk %d\n", ms->head->pid, ms->head->memchunk);
         printf("Node popped currentQ = %d\n", node.currentQ);
         node = PopMin(q);
         printf("Node popped currentQ = %d\n", node.currentQ);
@@ -85,4 +83,23 @@ int main(int argc, char * argv[]) {
     free(processes->proc_arr);
     free(processes);
     free(ms);
+}
+
+void insertNode(process node, sim * ms) {
+    printf("Insert node function\n");
+    process * track = NULL;
+    if (ms->head == NULL) {
+        printf("The LL is empty\n");
+        ms->head = &node;
+    } else {
+        //LL is not empty
+        track = ms->head;
+        while (track->next != NULL) {
+            track = track->next;
+        } //Gonna have to modify this to suit the different allocation algorithms
+        //Track got to the end of the LL
+        track->next = &node;
+        track->next->next = NULL;
+    }
+    
 }

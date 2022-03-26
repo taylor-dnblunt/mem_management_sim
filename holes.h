@@ -27,7 +27,7 @@ typedef struct Heap Heap;
 
 typedef struct sim {
     int space_rem; //Remaining space for allocation
-    process ** head;
+    process * head;
 } sim;
 
 int inputChecker(int argc, char * argv[]);
