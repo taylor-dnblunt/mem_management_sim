@@ -4,7 +4,7 @@
 
 typedef struct process {
     int pid;
-    int currentQ;
+    int timeStamp;
     int memchunk;
     int start;
     int end;
@@ -28,10 +28,15 @@ typedef struct Heap Heap;
 typedef struct sim {
     int space_rem; //Remaining space for allocation
     int nodeCnt;
+    int lowestTime;
     process * head;
 } sim;
 
 int inputChecker(int argc, char * argv[]);
+void insertNode(process * node, sim * ms, Heap * q);
+void swapOut(sim * ms, process * node, Heap * q);
+int spaceChecker(sim * ms);
+void timeStampCheck(sim * ms);
 
 Heap *CreateHeap(int capacity,int heap_type);
 void insert(Heap *h, process * thread);
