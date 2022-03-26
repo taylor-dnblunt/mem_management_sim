@@ -16,7 +16,7 @@ Heap *CreateHeap(int capacity,int heap_type){
     h->count=0;
     h->capacity = capacity;
     //make the array an array of threads to be sorted by arrival time
-    h->arr = (process *) malloc(capacity*sizeof(process)); //size in bytes
+    h->arr = (process **) malloc(capacity*sizeof(process *)); //size in bytes
 
     //check if allocation succeed
     /*if ( h->arr == NULL){
@@ -27,7 +27,7 @@ Heap *CreateHeap(int capacity,int heap_type){
 }
 
 //Want to insert the thread
-void insert(Heap *h, process thread){
+void insert(Heap *h, process * thread){
     if( h->count < h->capacity){
         h->arr[h->count] = thread;
         heapify_bottom_top(h, h->count);
@@ -36,10 +36,10 @@ void insert(Heap *h, process thread){
 }
 
 void heapify_bottom_top(Heap *h,int index){//What is index in this case?
-    process temp;
+    process * temp;
     int parent_node = (index-1)/2;
 
-    if(h->arr[parent_node].pid > h->arr[index].pid){
+    if(h->arr[parent_node]->pid > h->arr[index]->pid){
         //swap and recursive call
         temp = h->arr[parent_node];
         h->arr[parent_node] = h->arr[index];
@@ -52,7 +52,7 @@ void heapify_top_bottom(Heap *h, int parent_node){
     int left = parent_node*2+1;
     int right = parent_node*2+2;
     int min;
-    process temp;
+    process * temp;
 
     if(left >= h->count || left <0) {
         left = -1;
@@ -61,13 +61,13 @@ void heapify_top_bottom(Heap *h, int parent_node){
     if(right >= h->count || right <0){
         right = -1;
     }
-    if(left != -1 && h->arr[left].pid < h->arr[parent_node].pid) {
+    if(left != -1 && h->arr[left]->pid < h->arr[parent_node]->pid) {
         min=left;
     } else {
         min =parent_node;
     }
         
-    if(right != -1 && h->arr[right].pid < h->arr[min].pid) {
+    if(right != -1 && h->arr[right]->pid < h->arr[min]->pid) {
         min = right;
     }
         
@@ -82,8 +82,8 @@ void heapify_top_bottom(Heap *h, int parent_node){
     }
 }
 
-process PopMin(Heap *h){
-    process pop;
+process * PopMin(Heap *h){
+    process * pop;
     if(h->count==0){
         printf("\n__Heap is Empty__\n");
         
@@ -101,7 +101,7 @@ void print(Heap *h){
     int i;
     printf("____________Print Heap_____________\n");
     for(i=0;i< h->count;i++){
-        printf("-> %d ",h->arr[i].pid);
+        printf("-> %d ",h->arr[i]->pid);
     }
     printf("->__/\\__\n");
 }
