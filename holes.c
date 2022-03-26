@@ -29,7 +29,7 @@ int main(int argc, char * argv[]) {
 
     proc_list * processes = malloc(sizeof(struct proc_list)); //Initial list that holds all procs
     sim * ms = (sim *)malloc(sizeof(struct sim)); //Memory sim struct
-    ms->space_rem = MEMMAX;
+    ms->space_rem = MEMMAX; //Addressing 0-1023
     processes->proc_arr = malloc(sizeof(struct process) * numLines);
     processes->numProcs = numLines;
     
