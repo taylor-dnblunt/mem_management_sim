@@ -38,6 +38,7 @@ void insertNode(process * node, sim * ms, Heap * q);
 void swapOut(sim * ms, process * node, Heap * q);
 int spaceChecker(sim * ms);
 void timeStampCheck(sim * ms);
+void printMem(sim * ms);
 
 Heap *CreateHeap(int capacity,int heap_type);
 void insert(Heap *h, process * thread);
