@@ -29,6 +29,7 @@ typedef struct sim {
     int space_rem; //Remaining space for allocation
     int nodeCnt;
     int lowestTime;
+    int numprocs;
     process * head;
 } sim;
 
