@@ -39,7 +39,7 @@ void heapify_bottom_top(Heap *h,int index){//What is index in this case?
     process * temp;
     int parent_node = (index-1)/2;
 
-    if(h->arr[parent_node]->pid > h->arr[index]->pid){
+    if(h->arr[parent_node]->timeStamp > h->arr[index]->timeStamp){
         //swap and recursive call
         temp = h->arr[parent_node];
         h->arr[parent_node] = h->arr[index];
@@ -61,13 +61,13 @@ void heapify_top_bottom(Heap *h, int parent_node){
     if(right >= h->count || right <0){
         right = -1;
     }
-    if(left != -1 && h->arr[left]->pid < h->arr[parent_node]->pid) {
+    if(left != -1 && h->arr[left]->timeStamp < h->arr[parent_node]->timeStamp) {
         min=left;
     } else {
         min =parent_node;
     }
         
-    if(right != -1 && h->arr[right]->pid < h->arr[min]->pid) {
+    if(right != -1 && h->arr[right]->timeStamp < h->arr[min]->timeStamp) {
         min = right;
     }
         
