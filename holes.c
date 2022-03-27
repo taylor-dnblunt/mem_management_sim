@@ -101,14 +101,24 @@ int main(int argc, char * argv[]) {
         printf("\nInsert node function\n");
         insertNode(node, ms, q); //9th insert node back to 130
 
+        node = PopMin(q);
+        printf("\nInsert node function\n");
+        insertNode(node, ms, q); //10th insert node back to 99
+
+        node = PopMin(q);
+        printf("\nInsert node function\n");
+        insertNode(node, ms, q); //11th insert node back to 200
+
         if (ms->head != NULL) {
             printf("Current head node has %d memchunk\n", ms->head->memchunk);
             printf("Head node ends at %d and next node starts at %d\n", ms->head->end, ms->head->next->start);
             printf("Following node %d memchunk\n", ms->head->next->memchunk);
         }
 
+
     }
 
+    printMem(ms);
     print(q);
     // for (int i = 0; i < numLines; i++) {
     //     free(q->arr[i]);
@@ -211,6 +221,10 @@ void swapOut(sim * ms, process * node, Heap * q) {
             printf("Remove process with memchunk %d\n", traverse->memchunk);
             if (ms->head->numSwaps == 3) {
                 printf("This process has been swapped out 3 times and is complete\n"); //Prob free node now
+                process * temp = ms->head;
+                ms->head = ms->head->next;
+                temp->next = NULL;
+                free(temp);
             } else {
                 printf("This process has %d swaps\n", ms->head->numSwaps);
                 insert(q, ms->head);
@@ -241,7 +255,8 @@ void swapOut(sim * ms, process * node, Heap * q) {
                     temp->timeStamp += ms->numprocs;
                     printf("The node to be removed has timestamp %d\n", temp->timeStamp);
                     if (temp->numSwaps == 3) {
-                    printf("This process has been swapped out 3 times and is complete\n");
+                        printf("This process has been swapped out 3 times and is complete\n");
+                        free(temp);
                     } else {
                         insert(q, temp);
                     }
@@ -313,4 +328,15 @@ void timeStampCheck(sim * ms) {
         }
         traverse = traverse->next;
     }
+}
+
+void printMem(sim * ms) {
+    if (ms->head != NULL) {
+        process * temp = ms->head;
+        while (temp->next != NULL) {
+            printf("Current node starts at %d and ends at %d with memory %d\n", temp->start, temp->end, temp->memchunk);
+            temp = temp->next;
+        }   
+    }
+    
 }
