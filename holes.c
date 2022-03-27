@@ -176,6 +176,8 @@ void insertNode(process * node, sim * ms, Heap * q) {
             track = track->next;
         } //Gonna have to modify this to suit the different allocation algorithms
         //There is not enough space between two nodes is there at the end?
+        printf("The final node starts at %d and has memory %d\n", track->start, track->memchunk);
+        printMem(ms);
         int spaceAfter = MEMMAX - track->end;//The space remaining after the last process in the list
         printf("Space after last node in memory %d\n", spaceAfter);
         if (track->next == NULL && spaceAfter >= node->memchunk) {//Track got to the end of the LL
