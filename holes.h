@@ -30,6 +30,8 @@ typedef struct sim {
     int nodeCnt;
     int lowestTime;
     int numprocs;
+    float cumPercTotal;
+    int curNumPIDLoads;
     float cumPercMem;
     process * head;
 } sim;
