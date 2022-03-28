@@ -27,10 +27,11 @@ int main(int argc, char * argv[]) {
     fclose(inFile);
 
     sim * ms = (sim *)malloc(sizeof(struct sim)); //Memory sim struct
-    ms->cumPercMem = 0;
     ms->space_rem = MEMMAX; //Addressing 0-1023
     ms->head = NULL;
     ms->nodeCnt = 0;
+    ms->curNumPIDLoads = 0;
+    ms->cumPercTotal = 0;
     ms->numprocs = numLines;
     Heap * q = CreateHeap(numLines, 0);
     
@@ -123,6 +124,8 @@ int main(int argc, char * argv[]) {
     }
 
     printMem(ms);
+
+    printSummary(ms);
     print(q);
     // for (int i = 0; i < numLines; i++) {
     //     free(q->arr[i]);
