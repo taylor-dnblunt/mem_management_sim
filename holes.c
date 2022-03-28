@@ -34,7 +34,6 @@ int main(int argc, char * argv[]) {
     ms->numprocs = numLines;
     Heap * q = CreateHeap(numLines, 0);
     
-    printf("Here?\n");
     const char s[2] = " ";
     char * token;
     int cnt = 0;
@@ -65,16 +64,16 @@ int main(int argc, char * argv[]) {
         printf("Allocate by first\n");
         printf("Current mem left for allocation = %d\n", ms->space_rem);
         process * node;
-        node = PopMin(q);
-        insertNode(node, ms, q);
-        // printf("Current head memchunk %d\n", ms->head->memchunk);
-        // printf("sim pointer points to pid %d and has memchunk %d\n", ms->head->pid, ms->head->memchunk);
+        // node = PopMin(q);
+        // insertNode(node, ms, q);
+        // // printf("Current head memchunk %d\n", ms->head->memchunk);
+        // // printf("sim pointer points to pid %d and has memchunk %d\n", ms->head->pid, ms->head->memchunk);
 
-        node = PopMin(q);
-        insertNode(node, ms, q);
-        // printf("Node popped currentQ = %d\n", node.currentQ);
-        node = PopMin(q);
-        insertNode(node, ms, q);
+        // node = PopMin(q);
+        // insertNode(node, ms, q);
+        // // printf("Node popped currentQ = %d\n", node.currentQ);
+        // node = PopMin(q);
+        // insertNode(node, ms, q);
 
         // node = PopMin(q);
         // insertNode(node, ms, q); //4th insert node
@@ -116,13 +115,10 @@ int main(int argc, char * argv[]) {
                 printf("Following node %d memchunk\n", ms->head->next->memchunk);
             }
         }
-
-        printf("q count %d\n", q->count);
-        // while (q->count != 0) {//While the q is not empty swap in and out processes
-        //     node = PopMin(q);   
-        //     printf("\nInsert node function\n");
-        //     insertNode(node, ms, q); //12th insert node back to 512
-        // }
+        while (q->count != 0) {//While the q is not empty swap in and out processes
+            node = PopMin(q);   
+            insertNode(node, ms, q); //12th insert node back to 512
+        }
 
     }
 
