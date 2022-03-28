@@ -27,6 +27,7 @@ int main(int argc, char * argv[]) {
     fclose(inFile);
 
     sim * ms = (sim *)malloc(sizeof(struct sim)); //Memory sim struct
+    ms->cumPercMem = 0;
     ms->space_rem = MEMMAX; //Addressing 0-1023
     ms->head = NULL;
     ms->nodeCnt = 0;
@@ -65,62 +66,48 @@ int main(int argc, char * argv[]) {
         printf("Current mem left for allocation = %d\n", ms->space_rem);
         process * node;
         node = PopMin(q);
-        printf("\nInsert node function\n");
         insertNode(node, ms, q);
-        printf("Current head memchunk %d\n", ms->head->memchunk);
-        printf("sim pointer points to pid %d and has memchunk %d\n", ms->head->pid, ms->head->memchunk);
+        // printf("Current head memchunk %d\n", ms->head->memchunk);
+        // printf("sim pointer points to pid %d and has memchunk %d\n", ms->head->pid, ms->head->memchunk);
 
         node = PopMin(q);
-        printf("\nInsert node function\n");
         insertNode(node, ms, q);
         // printf("Node popped currentQ = %d\n", node.currentQ);
         node = PopMin(q);
-        printf("\nInsert node function\n");
         insertNode(node, ms, q);
 
-        node = PopMin(q);
-        printf("\nInsert node function\n");
-        insertNode(node, ms, q); //4th insert node
+        // node = PopMin(q);
+        // insertNode(node, ms, q); //4th insert node
 
-        node = PopMin(q);
-        printf("\nInsert node function\n");
-        insertNode(node, ms, q); //5th insert node
+        // node = PopMin(q);
+        // insertNode(node, ms, q); //5th insert node
 
-        node = PopMin(q);
-        printf("\nInsert node function\n");
-        insertNode(node, ms, q); //6th insert node
+        // node = PopMin(q);
+        // insertNode(node, ms, q); //6th insert node
 
-        node = PopMin(q);
-        printf("\nInsert node function\n");
-        insertNode(node, ms, q); //7th insert node
+        // node = PopMin(q);
+        // insertNode(node, ms, q); //7th insert node
 
-        node = PopMin(q);
-        printf("\nInsert node function\n");
-        insertNode(node, ms, q); //8th insert node
+        // node = PopMin(q);
+        // insertNode(node, ms, q); //8th insert node
 
-        node = PopMin(q);
-        printf("\nInsert node function\n");
-        insertNode(node, ms, q); //9th insert node back to 130
+        // node = PopMin(q);
+        // insertNode(node, ms, q); //9th insert node back to 130
 
-        node = PopMin(q);
-        printf("\nInsert node function\n");
-        insertNode(node, ms, q); //10th insert node back to 99
+        // node = PopMin(q);
+        // insertNode(node, ms, q); //10th insert node back to 99
 
-        node = PopMin(q);
-        printf("\nInsert node function\n");
-        insertNode(node, ms, q); //11th insert node back to 200
+        // node = PopMin(q);
+        // insertNode(node, ms, q); //11th insert node back to 200
 
-        node = PopMin(q);
-        printf("\nInsert node function\n");
-        insertNode(node, ms, q); //12th insert node back to 512
+        // node = PopMin(q);
+        // insertNode(node, ms, q); //12th insert node back to 512
 
-        node = PopMin(q);
-        printf("\nInsert node function\n");
-        insertNode(node, ms, q); //13th insert node back to 440
+        // node = PopMin(q);
+        // insertNode(node, ms, q); //13th insert node back to 440
 
-        node = PopMin(q);
-        printf("\nInsert node function\n");
-        insertNode(node, ms, q); //14th insert node back to 320
+        // node = PopMin(q);
+        // insertNode(node, ms, q); //14th insert node back to 320
 
         if (ms->head != NULL) {
             printf("Current head node has %d memchunk\n", ms->head->memchunk);
@@ -130,7 +117,7 @@ int main(int argc, char * argv[]) {
             }
         }
 
-        // printf("q count %d\n", q->count);
+        printf("q count %d\n", q->count);
         // while (q->count != 0) {//While the q is not empty swap in and out processes
         //     node = PopMin(q);   
         //     printf("\nInsert node function\n");
