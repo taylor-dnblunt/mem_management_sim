@@ -30,6 +30,7 @@ typedef struct sim {
     int nodeCnt;
     int lowestTime;
     int numprocs;
+    float cumPercMem;
     process * head;
 } sim;
 
@@ -40,7 +41,8 @@ int spaceChecker(sim * ms);
 void timeStampCheck(sim * ms);
 void printMem(sim * ms);
 void headSwap(sim * ms, process * temp, int largestSpace, Heap * q);
-void nonHeadSwap(sim * ms, process * temp, Heap * q); 
+void nonHeadSwap(sim * ms, process * temp, Heap * q);
+void printAlloInfo(sim * ms);
 
 Heap *CreateHeap(int capacity,int heap_type);
 void insert(Heap *h, process * thread);
