@@ -34,6 +34,7 @@ int inputChecker(int argc, char * argv[]) {
 
 void insertNode(process * node, sim * ms, Heap * q) {
     process * track = NULL;
+    int once = 0;
     printf("\n***INSERT***\n");
     if (ms->head == NULL) {//If the list is empty insert at head
         //printf("The LL is empty\n");
@@ -44,6 +45,7 @@ void insertNode(process * node, sim * ms, Heap * q) {
         ms->head->end = node->memchunk;
         // printf("Process start %d and end %d\n", ms->head->start, ms->head->end);
         ms->space_rem -= node->memchunk;
+        printAlloInfo(ms);
         ms->nodeCnt++;
         // printf("%d Memory added, Space remaining %d\n", node->memchunk, ms->space_rem);
 
@@ -57,6 +59,7 @@ void insertNode(process * node, sim * ms, Heap * q) {
             ms->head->start = 0;
             ms->head->end = ms->head->memchunk;
             ms->space_rem -= ms->head->memchunk;
+            printAlloInfo(ms);
             ms->nodeCnt++;
             // printf("process start %d and process end %d\n", node->start, node->end);
             return;
@@ -72,6 +75,7 @@ void insertNode(process * node, sim * ms, Heap * q) {
                     ms->nodeCnt++;
                     node->start = track->end + 1;
                     node->end = node->start + node->memchunk;
+                    printAlloInfo(ms);
                     // printf("process start %d and process end %d\n", node->start, node->end);
                     return;//Leave function if space is found between two processes
                 } 
@@ -93,7 +97,7 @@ void insertNode(process * node, sim * ms, Heap * q) {
             ms->nodeCnt++;
             node->start = track->end + 1;
             node->end = node->start + node->memchunk;
-
+            printAlloInfo(ms);
             // printf("%d Memory added, Space remaining %d\n", node->memchunk, ms->space_rem);
             // printf("process start %d and process end %d\n", node->start, node->end);
         } else {
@@ -102,7 +106,7 @@ void insertNode(process * node, sim * ms, Heap * q) {
         }
         
     }
-    printAlloInfo(ms);
+    
     track = NULL;
 }
 
@@ -309,10 +313,14 @@ void printAlloInfo(sim * ms) {
         numHoles++;
     }
     percMem = 100 - (float)ms->space_rem / MEMMAX * 100;
+    ms->curNumPIDLoads++;
     if (ms->cumPercMem == 0) {
+        ms->cumPercTotal = percMem;
         ms->cumPercMem = percMem;
     } else {
-        ms->cumPercMem = (percMem + ms->cumPercMem) / 2;
+        ms->cumPercTotal = ms->cumPercTotal + percMem;
+        printf("cumPercTotal = %.1f\n", ms->cumPercTotal);
+        ms->cumPercMem = ms->cumPercTotal / ms->curNumPIDLoads;
     }
     printf("ms->space rem = %d\n", ms->space_rem);
     printf("pid loaded, #processes = %d, holes = %d, %%memusage = %.1f, cumulative %%mem = %.1f\n", numProcs, numHoles, percMem, ms->cumPercMem);
