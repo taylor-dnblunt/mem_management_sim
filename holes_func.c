@@ -211,22 +211,6 @@ void timeStampCheck(sim * ms) {
     }
 }
 
-void printMem(sim * ms) {
-    if (ms->head != NULL) {
-        process * temp = ms->head;
-        printf("\n****************Memory Summary****************\n");
-        while (temp->next != NULL) {
-            printf("Current node timestamp %d:\n", temp->timeStamp);
-            printf("node starts at %d and ends at %d with memory %d\n\n", temp->start, temp->end, temp->memchunk);
-            temp = temp->next;
-        }
-        printf("Final node timestamp %d:\n", temp->timeStamp);  
-        printf("final node starts at %d and ends at %d with memory %d\n", temp->start, temp->end, temp->memchunk);
-    }
-    printf("Total memory space remaining: %d\n", ms->space_rem);
-    
-}
-
 void headSwap(sim * ms, process * temp, int largestSpace, Heap * q) {
     ms->head->numSwaps++;
     ms->space_rem += ms->head->memchunk;
@@ -301,6 +285,7 @@ void printAlloInfo(sim * ms) {
     int numProcs = 1;
     int numHoles = 0;
     float percMem = 0;
+    float cumPercMem = 0;
     temp = ms->head;
     while (temp->next != NULL) {
         numProcs++;
@@ -314,14 +299,37 @@ void printAlloInfo(sim * ms) {
     }
     percMem = 100 - (float)ms->space_rem / MEMMAX * 100;
     ms->curNumPIDLoads++;
-    if (ms->cumPercMem == 0) {
-        ms->cumPercTotal = percMem;
-        ms->cumPercMem = percMem;
-    } else {
-        ms->cumPercTotal = ms->cumPercTotal + percMem;
-        printf("cumPercTotal = %.1f\n", ms->cumPercTotal);
-        ms->cumPercMem = ms->cumPercTotal / ms->curNumPIDLoads;
-    }
+    ms->cumPercTotal = ms->cumPercTotal + percMem;
+    printf("cumPercTotal = %.1f\n", ms->cumPercTotal);
+    cumPercMem = ms->cumPercTotal / (float)ms->curNumPIDLoads;
+    ms->avgProcsTot = ms->avgProcsTot + numProcs;
+    ms->avgHolesTot = ms->avgHolesTot + numHoles;
     printf("ms->space rem = %d\n", ms->space_rem);
-    printf("pid loaded, #processes = %d, holes = %d, %%memusage = %.1f, cumulative %%mem = %.1f\n", numProcs, numHoles, percMem, ms->cumPercMem);
+    printf("pid loaded, #processes = %d, holes = %d, %%memusage = %.1f, cumulative %%mem = %.1f\n", numProcs, numHoles, percMem, cumPercMem);
+}
+
+void printMem(sim * ms) {
+    if (ms->head != NULL) {
+        process * temp = ms->head;
+        printf("\n****************Memory Summary****************\n");
+        while (temp->next != NULL) {
+            printf("Current node timestamp %d:\n", temp->timeStamp);
+            printf("node starts at %d and ends at %d with memory %d\n\n", temp->start, temp->end, temp->memchunk);
+            temp = temp->next;
+        }
+        printf("Final node timestamp %d:\n", temp->timeStamp);  
+        printf("final node starts at %d and ends at %d with memory %d\n", temp->start, temp->end, temp->memchunk);
+    }
+    printf("Total memory space remaining: %d\n", ms->space_rem);
+    
+}
+
+void printSummary(sim * ms) {
+    float avgProcs = 0;
+    float avgHoles = 0;
+    avgProcs = ms->avgProcsTot / ms->curNumPIDLoads;
+    avgHoles = ms->avgHolesTot / ms->curNumPIDLoads;
+    printf("Total loads = %d\n", ms->curNumPIDLoads);
+    printf(", average processes = %.1f, average #holes = %.1f, ", avgProcs, avgHoles);
+    printf("cumulative %%mem = %.1f\n", ms->cumPercTotal / ms->curNumPIDLoads);
 }
