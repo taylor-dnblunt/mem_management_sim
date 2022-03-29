@@ -32,6 +32,8 @@ int main(int argc, char * argv[]) {
     ms->nodeCnt = 0;
     ms->curNumPIDLoads = 0;
     ms->cumPercTotal = 0;
+    ms->mostRecentPid = 0;
+    ms->lowestTime = 0;
     ms->numprocs = numLines;
     Heap * q = CreateHeap(numLines, 0);
     
@@ -65,50 +67,6 @@ int main(int argc, char * argv[]) {
         printf("Allocate by first\n");
         printf("Current mem left for allocation = %d\n", ms->space_rem);
         process * node;
-        // node = PopMin(q);
-        // insertNode(node, ms, q);
-        // // printf("Current head memchunk %d\n", ms->head->memchunk);
-        // // printf("sim pointer points to pid %d and has memchunk %d\n", ms->head->pid, ms->head->memchunk);
-
-        // node = PopMin(q);
-        // insertNode(node, ms, q);
-        // // printf("Node popped currentQ = %d\n", node.currentQ);
-        // node = PopMin(q);
-        // insertNode(node, ms, q);
-
-        // node = PopMin(q);
-        // insertNode(node, ms, q); //4th insert node
-
-        // node = PopMin(q);
-        // insertNode(node, ms, q); //5th insert node
-
-        // node = PopMin(q);
-        // insertNode(node, ms, q); //6th insert node
-
-        // node = PopMin(q);
-        // insertNode(node, ms, q); //7th insert node
-
-        // node = PopMin(q);
-        // insertNode(node, ms, q); //8th insert node
-
-        // node = PopMin(q);
-        // insertNode(node, ms, q); //9th insert node back to 130
-
-        // node = PopMin(q);
-        // insertNode(node, ms, q); //10th insert node back to 99
-
-        // node = PopMin(q);
-        // insertNode(node, ms, q); //11th insert node back to 200
-
-        // node = PopMin(q);
-        // insertNode(node, ms, q); //12th insert node back to 512
-
-        // node = PopMin(q);
-        // insertNode(node, ms, q); //13th insert node back to 440
-
-        // node = PopMin(q);
-        // insertNode(node, ms, q); //14th insert node back to 320
-
         if (ms->head != NULL) {
             printf("Current head node has %d memchunk\n", ms->head->memchunk);
             if (ms->head->next != NULL) {
@@ -118,13 +76,25 @@ int main(int argc, char * argv[]) {
         }
         while (q->count != 0) {//While the q is not empty swap in and out processes
             node = PopMin(q);   
-            insertNode(node, ms, q); //12th insert node back to 512
+            insertNode(node, ms, q);
         }
+
+    } else if (memStrat == 2) {//best fit
+
+    } else if (memStrat == 3) {//next fit
+        printf("Allocate by next fit\n");
+        printf("Current mem left for allocation = %d\n", ms->space_rem);
+        process * node;
+        while (q->count != 0) {//While the q is not empty swap in and out processes
+            printMem(ms);
+            node = PopMin(q);   
+            insertNodeNext(node, ms, q);
+        }
+    } else if (memStrat == 4) {//worst fit
 
     }
 
-    printMem(ms);
-
+    //printMem(ms);
     printSummary(ms);
     print(q);
     // for (int i = 0; i < numLines; i++) {
