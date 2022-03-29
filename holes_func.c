@@ -411,7 +411,3 @@ void insertEnd(sim * ms, process * node, process * temp) {
     printAlloInfo(ms);
     printf("Program ends here\n");
 }
-
-// void iNNCheck() {
-
-// }
