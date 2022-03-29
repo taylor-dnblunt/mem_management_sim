@@ -33,89 +33,125 @@ int inputChecker(int argc, char * argv[]) {
 }
 
 void insertNode(process * node, sim * ms, Heap * q) {
-    process * track = NULL;
-    int once = 0;
-    printf("\n***INSERT***\n");
-    if (ms->head == NULL) {//If the list is empty insert at head
-        //printf("The LL is empty\n");
-        ms->head = node;
-        ms->head->next = NULL;
-        // printf("ms->head->memchunk %d\n", ms->head->memchunk);
-        ms->head->start = 0;
-        ms->head->end = node->memchunk;
-        // printf("Process start %d and end %d\n", ms->head->start, ms->head->end);
-        ms->space_rem -= node->memchunk;
-        printAlloInfo(ms);
-        ms->nodeCnt++;
-        // printf("%d Memory added, Space remaining %d\n", node->memchunk, ms->space_rem);
+    process * temp = NULL;
+    void (*inserts)(process * node, sim * ms, Heap * q);
+    inserts = &insertNode;
+    printf("\n***INSERT NODE***\n");
+    if (ms->head == NULL) {//LL is empty, insert at head
+        insertHead(ms, node);
 
-    } else if (ms->head != NULL) {
-        //printf("LL is not empty\n");
-        track = ms->head;
-        if (ms->head->start - 0 >= node->memchunk) {//There is space at the start of the memory allocation list
-            //printf("Insert before the first node\n");
-            node->next = ms->head;//place node at the start of the list
-            ms->head = node;
-            ms->head->start = 0;
-            ms->head->end = ms->head->memchunk;
-            ms->space_rem -= ms->head->memchunk;
-            printAlloInfo(ms);
-            ms->nodeCnt++;
-            // printf("process start %d and process end %d\n", node->start, node->end);
+    } else if (ms->head != NULL) {//The LL is not empty
+        temp = ms->head;
+        if (ms->head->start - 0 >= node->memchunk) {//Insert before first node
+            insertStart(ms, node);
             return;
         }
-        while (track->next != NULL) {
+        while (temp->next != NULL) {
             if (ms->nodeCnt >= 2) {//Enter node into the middle of two if there is space
-                //printf("Greater than 2 nodes\n");
-                int spaceAfter = track->next->start - track->end;
+                int spaceAfter = temp->next->start - temp->end;
                 if (spaceAfter >= node->memchunk) {//The space between processes is big enough to accomadate
-                    node->next = track->next;
-                    track->next = node;
-                    ms->space_rem -= node->memchunk;
-                    ms->nodeCnt++;
-                    node->start = track->end + 1;
-                    node->end = node->start + node->memchunk;
-                    printAlloInfo(ms);
-                    // printf("process start %d and process end %d\n", node->start, node->end);
+                    insertMiddle(ms, node, temp);
                     return;//Leave function if space is found between two processes
                 } 
             }
             
-            track = track->next;
+            temp = temp->next;
         } //Gonna have to modify this to suit the different allocation algorithms
-        //There is not enough space between two nodes is there at the end?
-        // printf("The final node starts at %d and has memory %d\n", track->start, track->memchunk);
 
         //printMem(ms);
 
-        int spaceAfter = MEMMAX - track->end;//The space remaining after the last process in the list
-        // printf("Space after last node in memory %d\n", spaceAfter);
-        if (track->next == NULL && spaceAfter >= node->memchunk) {//Track got to the end of the LL
-            track->next = node;
-            track->next->next = NULL;
-            ms->space_rem -= node->memchunk;
-            ms->nodeCnt++;
-            node->start = track->end + 1;
-            node->end = node->start + node->memchunk;
-            printAlloInfo(ms);
-            // printf("%d Memory added, Space remaining %d\n", node->memchunk, ms->space_rem);
-            // printf("process start %d and process end %d\n", node->start, node->end);
+        int spaceAfter = MEMMAX - temp->end;//The space remaining after the last process in the list
+        if (temp->next == NULL && spaceAfter >= node->memchunk) {
+            insertEnd(ms, node, temp);
         } else {
             printf("Need to do some swapping to make room\n");
-            swapOut(ms, node, q);
+            swapOut(ms, node, q, (*inserts));
         }
-        
     }
-    
-    track = NULL;
+    temp = NULL;
 }
 
-void swapOut(sim * ms, process * node, Heap * q) {
+void insertNodeNext(process * node, sim * ms, Heap * q) {//Node gives the node to be inserted
+    process * temp = NULL;
+    int space = 0;
+    int i = 1;
+    void (*inserts)(process * node, sim * ms, Heap * q);
+    inserts = &insertNodeNext;
+    printf("\n***INSERT NODE NEXT***\n");
+    //LL IS EMPTY, INSERT AT HEAD
+    if (ms->head == NULL) {
+        temp = node;
+        ms->mostRecentPid = temp->timeStamp;
+        ms->mostRecent = temp;
+        printf("Empty list, insert new node with pid %d and memchunk %d\n", temp->timeStamp, temp->memchunk);
+        insertHead(ms, node);
+        return;
+    //LL NOT EMPTY
+    } else {
+        printf("ms->mostRecent->memchunk = %d\n", ms->mostRecent->memchunk); 
+        temp = ms->mostRecent;
+        while (temp->next != NULL) {
+            space = temp->next->start - temp->end;
+            if (space >= node->memchunk) {
+                ms->mostRecentPid = node->timeStamp;
+                ms->mostRecent = node;
+                insertMiddle(ms, node, temp);
+                return;
+            }
+            temp = temp->next;
+        }
+        if (temp->next == NULL) {//End node or only node
+            space = MEMMAX - temp->end;
+            if (space >= node->memchunk) {
+                ms->mostRecentPid = node->timeStamp;
+                ms->mostRecent = node;
+                insertEnd(ms, node, temp);
+                return;
+            }
+        }//At this point checked from most recent to end now check from beginning to most recent
+        printf("Space not found in middle or end, check before most recent\n");
+        if (ms->head->start != 0 && i == 1) {
+            printf("Head does not start at 0\n");
+            space = ms->head->start - 0;
+            if (space >= node->memchunk) {
+                ms->mostRecentPid = node->timeStamp;
+                ms->mostRecent = node;
+                insertStart(ms, node);
+                return;
+            }
+            i = 0;
+        }
+        if (ms->head->timeStamp != ms->mostRecent->timeStamp) {//Go until most recent and check spaces
+            temp = ms->head;
+            while (temp->next->timeStamp != ms->mostRecent->timeStamp) {
+                printf("f");
+                space = temp->next->start - temp->end;
+                if (space >= node->memchunk) {
+                    ms->mostRecentPid = node->timeStamp;
+                    ms->mostRecent = node;
+                    insertMiddle(ms, node, temp);
+                    return;
+                }
+                temp = temp->next;
+            }
+            //Check space in between node and most recent
+            space = temp->next->start - temp->end;
+            if (space >= node->memchunk) {
+                ms->mostRecentPid = node->timeStamp;
+                ms->mostRecent = node;
+                insertMiddle(ms, node, temp);
+                return;
+            }
+        }
+    }
+    printf("No space found\n");
+    swapOut(ms, node, q, (*inserts));
+}
+
+void swapOut(sim * ms, process * node, Heap * q, void (*inserts)(process * node, sim * ms, Heap * q)) {
     printf("\n***SWAP FUNCTION***\n");
-    //printf("Need %d contiguous memory\n", node->memchunk);
 
     int largestSpace = spaceChecker(ms);
-    //printf("The largest space currently is %d and the memchunk is %d\n", largestSpace, node->memchunk);
 
     process * temp = NULL;
 
@@ -140,7 +176,8 @@ void swapOut(sim * ms, process * node, Heap * q) {
     }
     //There is enough space for a process
     //printf("Before the insert node in swapout function\n");
-    insertNode(node, ms, q);
+    // insertNode(node, ms, q);
+    inserts(node, ms, q);
     
 }
 
@@ -333,3 +370,48 @@ void printSummary(sim * ms) {
     printf(", average processes = %.1f, average #holes = %.1f, ", avgProcs, avgHoles);
     printf("cumulative %%mem = %.1f\n", ms->cumPercTotal / ms->curNumPIDLoads);
 }
+
+void insertHead(sim * ms, process * node) {
+    ms->head = node;
+    ms->head->next = NULL;
+    ms->head->start = 0;
+    ms->head->end = node->memchunk;
+    ms->space_rem -= node->memchunk;
+    printAlloInfo(ms);
+    ms->nodeCnt++;
+}
+
+void insertStart(sim * ms, process * node) {
+    node->next = ms->head;//place node at start of list
+    ms->head = node;
+    ms->head->start = 0;
+    ms->head->end = ms->head->memchunk;
+    ms->space_rem -= ms->head->memchunk;
+    printAlloInfo(ms);
+    ms->nodeCnt++;
+}
+
+void insertMiddle(sim * ms, process * node, process * temp) {
+    node->next = temp->next;
+    temp->next = node;
+    ms->space_rem -= node->memchunk;
+    ms->nodeCnt++;
+    node->start = temp->end + 1;
+    node->end = node->start + node->memchunk;
+    printAlloInfo(ms);
+}
+
+void insertEnd(sim * ms, process * node, process * temp) {
+    temp->next = node;
+    temp->next->next = NULL;
+    ms->space_rem -= node->memchunk;
+    ms->nodeCnt++;
+    node->start = temp->end + 1;
+    node->end = node->start + node->memchunk;
+    printAlloInfo(ms);
+    printf("Program ends here\n");
+}
+
+// void iNNCheck() {
+
+// }
