@@ -37,7 +37,10 @@ int main(int argc, char * argv[]) {
     ms->numprocs = numLines;
     Heap * q = CreateHeap(numLines, 0);
     process * node = NULL;
+    process ** pp = (process**) malloc(sizeof(process *) * numLines);
     
+    process * p = NULL;
+    int numMallocs = 0;
     const char s[2] = " ";
     char * token;
     int cnt = 0;
@@ -45,7 +48,11 @@ int main(int argc, char * argv[]) {
     while (fgets(line, 100, inFile) != NULL) {
         //parse line and store data
         //pidnum <space> memSize
-        process * p = (process *)malloc(sizeof(process));
+        p = (process *)malloc(sizeof(process));
+        pp[cnt] = p;
+        numMallocs++;
+        printf("numMallocs = %d\n", numMallocs);
+        
         token = strtok(line, s);//pid
         p->pid = atoi(token);
         p->timeStamp = p->pid; //Set current q to its process number then deal as time goes on
@@ -108,10 +115,12 @@ int main(int argc, char * argv[]) {
     //printMem(ms);
     printSummary(ms);
     print(q);
-    // for (int i = 0; i < numLines; i++) {
-    //     free(q->arr[i]);
-    // } //Going to have to free all the processes
+    
     free(q->arr);
     free(q);
+    for (int i = 0; i < numLines; i++) {
+        free(pp[i]);
+    }
+    free(pp);
     free(ms);
 }

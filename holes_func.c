@@ -3,6 +3,7 @@
 #include <string.h>
 #include "holes.h"
 
+int numFrees = 0;
 
 int inputChecker(int argc, char * argv[]) {
 
@@ -395,32 +396,39 @@ void headSwap(sim * ms, process * temp, int largestSpace, Heap * q) {
         printf("This process has been swapped out 3 times and is complete\n"); //Prob free node now
         //printf("Head Node\n");
         process * temp = ms->head;
-        ms->head = ms->head->next;
-        temp->next = NULL;
-        //free(temp);
-    } else {
-        //printf("This process has %d swaps\n", ms->head->numSwaps);
-        insert(q, ms->head);
-    }
+        if (ms->head->next == NULL) {//Head node
+            ms->head = NULL;
+            // free(temp);
+            numFrees++;
+            printf("NODE FREED\n");
+            printf("numFrees = %d\n", numFrees);
 
-    if (ms->head->next == NULL) {
-        printf("Last node in list\n");
-        ms->head = NULL;
-        printf("No memory is currently allocated, list is empty\n");
-        largestSpace = MEMMAX;
-        ms->space_rem = MEMMAX;
+        } else {
+            ms->head = ms->head->next;
+            temp->next = NULL;
+            temp = NULL;
+            // free(temp);
+            numFrees++;
+            printf("NODE FREED\n");
+            printf("numFrees = %d\n", numFrees);
+        }
+        
     } else {
-        //printf("Remove front node and next node becomes head\n");
-        temp = ms->head;
-        ms->head = ms->head->next; //The new head is the next head
-        temp->next = NULL;
-        printf("New head of the list has memchunk %d and starts at %d\n", ms->head->memchunk, ms->head->start); 
-        // if (ms->head->next != NULL) {
-        //     printf("and next in line is %d\n",ms->head->next->memchunk);
-        // }
+        insert(q, ms->head);
+        if (ms->head->next == NULL) {
+            printf("Last node in list\n");
+            ms->head = NULL;
+            printf("No memory is currently allocated, list is empty\n");
+            largestSpace = MEMMAX;
+            ms->space_rem = MEMMAX;
+        } else {
+            printf("Remove front node and next node becomes head\n");
+            temp = ms->head;
+            ms->head = ms->head->next; //The new head is the next head
+            temp->next = NULL;
+            printf("New head of the list has memchunk %d and starts at %d\n", ms->head->memchunk, ms->head->start); 
+        }
     }
-    
-    //printf("Space reminaing after swapping out %d\n", ms->space_rem);
 }
 
 void nonHeadSwap(sim * ms, process * temp, Heap * q) {
@@ -442,7 +450,9 @@ void nonHeadSwap(sim * ms, process * temp, Heap * q) {
             //printf("The node to be removed has new timestamp %d\n", delNode->timeStamp);
             if (delNode->numSwaps == 3) {
                 printf("This process has been swapped out 3 times and is complete\n");
-                //free(delNode);
+                delNode = NULL;
+                // free(delNode);
+                printf("NODE FREED\n");
             } else {
                 insert(q, delNode);
                 printf("SUCCESSFULLY INSERTED BACK INTO QUEUE\n");
@@ -462,13 +472,16 @@ void printAlloInfo(sim * ms) {
     float percMem = 0;
     float cumPercMem = 0;
     temp = ms->head;
+    printf("Node with memchunk %d\n", temp->memchunk);
     while (temp->next != NULL) {
+        
         numProcs++;
         if ((temp->next->start - temp->end) > 1) {
             numHoles++;
         }
         temp = temp->next;
     }
+    printf("Final node numchunk = %d\n", temp->memchunk);
     if (MEMMAX - temp->end > 1) {//temp next == NULL but distance between temp and end?
         numHoles++;
     }
