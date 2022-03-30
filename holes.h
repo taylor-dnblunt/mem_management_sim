@@ -55,6 +55,8 @@ void insertMiddle(sim * ms, process * node, process * temp);
 void insertEnd(sim * ms, process * node, process * temp);
 void insertNodeNext(process * node, sim * ms, Heap * q);
 int cycleCheck(sim* ms, process * node, process * temp, int space);
+void insertNodeBest(process * node, sim * ms, Heap * q);
+void insertNodeWorst(process * node, sim * ms, Heap * q);
 
 Heap *CreateHeap(int capacity,int heap_type);
 void insert(Heap *h, process * thread);
