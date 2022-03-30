@@ -36,6 +36,7 @@ int main(int argc, char * argv[]) {
     ms->lowestTime = 0;
     ms->numprocs = numLines;
     Heap * q = CreateHeap(numLines, 0);
+    process * node = NULL;
     
     const char s[2] = " ";
     char * token;
@@ -66,7 +67,6 @@ int main(int argc, char * argv[]) {
     if (memStrat == 1) {
         printf("Allocate by first\n");
         printf("Current mem left for allocation = %d\n", ms->space_rem);
-        process * node;
         if (ms->head != NULL) {
             printf("Current head node has %d memchunk\n", ms->head->memchunk);
             if (ms->head->next != NULL) {
@@ -80,18 +80,29 @@ int main(int argc, char * argv[]) {
         }
 
     } else if (memStrat == 2) {//best fit
-
+        printf("Allocate by best fit\n");
+        printf("Current mem left for allocation = %d\n", ms->space_rem);
+        while (q->count != 0) {//While the q is not empty swap in and out processes
+            printMem(ms);
+            node = PopMin(q);   
+            insertNodeBest(node, ms, q);
+        }
     } else if (memStrat == 3) {//next fit
         printf("Allocate by next fit\n");
         printf("Current mem left for allocation = %d\n", ms->space_rem);
-        process * node;
         while (q->count != 0) {//While the q is not empty swap in and out processes
             printMem(ms);
             node = PopMin(q);   
             insertNodeNext(node, ms, q);
         }
     } else if (memStrat == 4) {//worst fit
-
+        printf("Allocate by worst fit\n");
+        printf("Current mem left for allocation = %d\n", ms->space_rem);
+        while (q->count != 0) {//While the q is not empty swap in and out processes
+            printMem(ms);
+            node = PopMin(q);   
+            insertNodeWorst(node, ms, q);
+        }
     }
 
     //printMem(ms);
