@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include"holes.h"
+#include"hole.h"
 
 
 //heap_type = 0 for min heap and 1 for max heap
