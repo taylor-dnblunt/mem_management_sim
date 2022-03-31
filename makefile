@@ -1,19 +1,19 @@
 CC = gcc
-CFLAGS = -std=gnu99 -Wpedantic -ggdb3
+CFLAGS = -std=gnu99 -Wpedantic
 
-all: holes
+all: hole
 
-holes: holes.o holes_func.o min_heap.o
-	$(CC) $(CFLAGS) holes.o holes_func.o min_heap.o -o holes
+hole: hole.o hole_func.o min_heap.o
+	$(CC) $(CFLAGS) hole.o hole_func.o min_heap.o -o hole
 
-holes.o: holes.c
-	$(CC) $(CFLAGS) -c holes.c -o holes.o
+hole.o: hole.c
+	$(CC) $(CFLAGS) -c hole.c -o hole.o
 
-holes_func.o: holes_func.c
-	$(CC) $(CFLAGS) -c holes_func.c -o holes_func.o
+hole_func.o: hole_func.c
+	$(CC) $(CFLAGS) -c hole_func.c -o hole_func.o
 
 min_heap.o: min_heap.c
 	$(CC) $(CFLAGS) -c min_heap.c -o min_heap.o
 
 clean:
-	rm *.o holes
+	rm *.o hole
