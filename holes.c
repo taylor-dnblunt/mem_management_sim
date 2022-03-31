@@ -9,9 +9,7 @@
 int main(int argc, char * argv[]) {
 
     char line[20];
-    printf("Max memory = %d\n", MEMMAX);
     int memStrat = inputChecker(argc, argv);
-    printf("Chosen mem strat = %d\n\n", memStrat);
     int numLines = 0;
     FILE * inFile = fopen(argv[1], "r");
 
@@ -23,7 +21,6 @@ int main(int argc, char * argv[]) {
     while (fgets(line, 100, inFile) != NULL) {
         numLines++;
     }
-    printf("Num Lines = %d\n", numLines);
     fclose(inFile);
 
     sim * ms = (sim *)malloc(sizeof(struct sim)); //Memory sim struct
@@ -40,18 +37,13 @@ int main(int argc, char * argv[]) {
     process ** pp = (process**) malloc(sizeof(process *) * numLines);
     
     process * p = NULL;
-    int numMallocs = 0;
     const char s[2] = " ";
     char * token;
     int cnt = 0;
     inFile = fopen(argv[1], "r");
     while (fgets(line, 100, inFile) != NULL) {
-        //parse line and store data
-        //pidnum <space> memSize
         p = (process *)malloc(sizeof(process));
         pp[cnt] = p;
-        numMallocs++;
-        printf("numMallocs = %d\n", numMallocs);
         
         token = strtok(line, s);//pid
         p->pid = atoi(token);
@@ -59,21 +51,15 @@ int main(int argc, char * argv[]) {
         token = strtok(NULL, s);//memchunk
         p->memchunk = atoi(token);
         p->numSwaps = 0;
-        printf("Process %d with memory %d\n", p->pid, p->memchunk);
         insert(q, p);    
-        // processes->proc_arr[cnt] = p;
         cnt++;
     }
     fclose(inFile);
-    printf("\n");
 
-    print(q);
-    
-    //0-1024
-    //Start making algorithm for first
+    // print(q);
     if (memStrat == 1) {
         printf("Allocate by first\n");
-        printf("Current mem left for allocation = %d\n", ms->space_rem);
+        printf("\n");
         if (ms->head != NULL) {
             printf("Current head node has %d memchunk\n", ms->head->memchunk);
             if (ms->head->next != NULL) {
@@ -84,37 +70,35 @@ int main(int argc, char * argv[]) {
         while (q->count != 0) {//While the q is not empty swap in and out processes
             node = PopMin(q);   
             insertNode(node, ms, q);
+            // printMem(ms);
         }
-
     } else if (memStrat == 2) {//best fit
         printf("Allocate by best fit\n");
-        printf("Current mem left for allocation = %d\n", ms->space_rem);
+        printf("\n");
         while (q->count != 0) {//While the q is not empty swap in and out processes
-            printMem(ms);
+            // printMem(ms);
             node = PopMin(q);   
             insertNodeBest(node, ms, q);
         }
     } else if (memStrat == 3) {//next fit
         printf("Allocate by next fit\n");
-        printf("Current mem left for allocation = %d\n", ms->space_rem);
+        printf("\n");
         while (q->count != 0) {//While the q is not empty swap in and out processes
-            printMem(ms);
+            // printMem(ms);
             node = PopMin(q);   
             insertNodeNext(node, ms, q);
         }
     } else if (memStrat == 4) {//worst fit
         printf("Allocate by worst fit\n");
-        printf("Current mem left for allocation = %d\n", ms->space_rem);
+        printf("\n");
         while (q->count != 0) {//While the q is not empty swap in and out processes
-            printMem(ms);
+            // printMem(ms);
             node = PopMin(q);   
             insertNodeWorst(node, ms, q);
         }
     }
 
-    //printMem(ms);
     printSummary(ms);
-    print(q);
     
     free(q->arr);
     free(q);
